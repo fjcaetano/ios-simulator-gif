@@ -17,7 +17,7 @@ $ brew tap fjcaetano/ios-simulator-gif https://github.com/fjcaetano/ios-simulato
 2. Install ios-simulator-gif (and dependencies):
 
 ```sh
-$ brew install fjcaetano/ios-simulator-gif
+$ brew install fjcaetano/ios-simulator-gif/ios-simulator-gif
 ```
 
 ### Usage
