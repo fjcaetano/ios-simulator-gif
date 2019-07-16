@@ -1,10 +1,11 @@
-# ios-simulator-gif
+📱 ios-simulator-gif
+---
 
 Record a gif from your iOS simulator in a jiffy
 
 ![Example GIF](example.gif?raw=true)
 
-### Instalation 
+## Installation 
 
 Assuming that you have [Homebrew](https://brew.sh/) installed, execute the following steps:
 
@@ -20,10 +21,27 @@ $ brew tap fjcaetano/ios-simulator-gif https://github.com/fjcaetano/ios-simulato
 $ brew install fjcaetano/ios-simulator-gif/ios-simulator-gif
 ```
 
-### Usage
+## Usage
 
 ```sh
-$ ios-simulator-gif [filename]
+$ ios-simulator-gif [options] {out_file} {-- [ffmpeg options]}
 ```
 
+| Options             | Description               | Default value   |
+| ------------------- | ------------------------- | :-------------: |
+| -r, --rate          | Framerate of the output   | `6`             |
+| -f, --format        | Output format             | `gif`           |
+| -vf, --video-filter | Video filter for `ffmpeg` | `scale=320:-1`  |
+| -h, --help          | Outputs helper message    | N/A             |
+
 If no file name is given, it will save the gif to `./simulator.gif`
+
+### Sending extra arguments to `ffmpeg`
+
+If you need to send extra arguments to `ffmpeg`, everything sent after double slashes (`--`) will be
+sent to `ffmpeg` as arguments:
+
+```sh
+$ ios-simulator-gif -r 30 example.gif -- -b 128k
+```
+
