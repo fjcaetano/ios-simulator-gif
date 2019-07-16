@@ -3,76 +3,102 @@
 # Records iOS simulator screen and saves as a gif to simulator.gif
 # A new file name may be passed as argument
 
-#########################
-# The command line help #
-#########################
-display_help() {
-    echo "Usage: $0 [options] {out_file}" >&2
-    echo
-    echo "   out_file                   The output file name (default: simulator.gif)"
-    echo
-    echo "   -r, --rate                 Framerate of the output (default: 6)"
-    echo "   -f, --format               Output format (default: gif)"
-    echo "   -vf, --video-filter        Video filter for ffmpeg (default: scale=320:-1)"
-    echo "   -h, --help                 Outputs this help message"
-    echo
-    exit 0
+##############
+###  MAIN  ###
+##############
+main() {
+  parse_args "$@"
+  record
+  convert_gif
 }
 
-########################
-###   ARGS PARSING   ###
-########################
-FILE_NAME=()
-while [[ $# -gt 0 ]]
-do
-key="$1"
-
-case $key in
-    -r|--rate)
-    RATE="$2"
-    shift 2
-    ;;
-    -f|--format)
-    FORMAT="$2"
-    shift 2
-    ;;
-    -vf)
-    VIDEOFILTER="$2"
-    shift 2
-    ;;
-    -h|--help)
-    display_help
-    shift
-    ;;
-    *)    # unknown option
-    FILE_NAME+=("$1") # save it in an array for later
-    shift
-    ;;
-esac
-done
-set -- "${FILE_NAME[@]}"
-
-FILE_NAME=${FILE_NAME-simulator.gif}
-RATE=${RATE-6}
-VIDEOFILTER=${VIDEOFILTER-'scale=320:-1'}
-FORMAT=${FORMAT-gif}
-
 ##################
-###   RECORD   ###
+###   Record   ###
 ##################
-echo 'Recording...\n\n[Press any key to stop recording]'
+record() {
+  echo 'Recording...\n\n[Press any key to stop recording]'
 
-xcrun simctl io booted recordVideo /tmp/simulator.mov &
-PID=$!
+  xcrun simctl io booted recordVideo /tmp/simulator.mov &
+  PID=$!
 
-read -n1
-kill -2 $PID
+  read -n1
+  kill -2 $PID
+}
 
+#######################
+###   Convert GIF   ###
+#######################
+convert_gif() {
 echo "Converting and saving to ${FILE_NAME}\n"
-ffmpeg -i /tmp/simulator.mov -vf $VIDEOFILTER -r $RATE -f $FORMAT -y $FILE_NAME &> /tmp/ffmpeg.log
+ffmpeg -i /tmp/simulator.mov -vf $VIDEOFILTER -r $RATE -f $FORMAT -y $FILE_NAME $EXTRA &> /tmp/ffmpeg.log
 
 if [[ $? -eq 0 ]]; then
   echo "Gif saved to ${FILE_NAME}"
 else
   cat /tmp/ffmpeg.log
 fi
+}
+
+
+########################
+###   ARGS PARSING   ###
+########################
+parse_args() {
+  FILE_NAME=()
+  while [[ $# -gt 0 ]]
+  do
+  key="$1"
+
+  case $key in
+      -r|--rate)
+      RATE="$2"
+      shift 2
+      ;;
+      -f|--format)
+      FORMAT="$2"
+      shift 2
+      ;;
+      -vf)
+      VIDEOFILTER="$2"
+      shift 2
+      ;;
+      -h|--help)
+      display_help
+      shift
+      ;;
+      --)
+      EXTRA="${@:2}"
+      shift
+      ;;
+      *)    # unknown option
+      FILE_NAME+=("$1") # save it in an array for later
+      shift
+      ;;
+  esac
+  done
+  set -- "${FILE_NAME[@]}"
+
+  FILE_NAME=${FILE_NAME-simulator.gif}
+  RATE=${RATE-6}
+  VIDEOFILTER=${VIDEOFILTER-'scale=320:-1'}
+  FORMAT=${FORMAT-gif}
+}
+
+#########################
+# The command line help #
+#########################
+display_help() {
+    echo "Usage: $0 [options] {out_file} {-- [ffmpeg options]}" >&2
+    echo
+    echo "  out_file                    The output file name (default: simulator.gif)"
+    echo "  ffmpeg options              Pass everything after '--' to ffmpeg as arguments"
+    echo
+    echo "  -r, --rate                  Framerate of the output (default: 6)"
+    echo "  -f, --format                Output format (default: gif)"
+    echo "  -vf, --video-filter         Video filter for ffmpeg (default: scale=320:-1)"
+    echo "  -h, --help                  Outputs this help message"
+    echo
+    exit 0
+}
+
+main "$@"
