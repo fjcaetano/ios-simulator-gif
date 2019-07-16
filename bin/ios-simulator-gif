@@ -29,14 +29,14 @@ record() {
 ###   Convert GIF   ###
 #######################
 convert_gif() {
-echo "Converting and saving to ${FILE_NAME}\n"
-ffmpeg -i /tmp/simulator.mov -vf $VIDEOFILTER -r $RATE -f $FORMAT -y $FILE_NAME $EXTRA &> /tmp/ffmpeg.log
+  echo "Converting and saving to ${FILE_NAME}\n"
+  ffmpeg -i /tmp/simulator.mov -vf $VIDEOFILTER -r $RATE -f $FORMAT -y $FILE_NAME $EXTRA &> /tmp/ffmpeg.log
 
-if [[ $? -eq 0 ]]; then
-  echo "Gif saved to ${FILE_NAME}"
-else
-  cat /tmp/ffmpeg.log
-fi
+  if [[ $? -eq 0 ]]; then
+    echo "Gif saved to ${FILE_NAME}"
+  else
+    cat /tmp/ffmpeg.log
+  fi
 }
 
 
