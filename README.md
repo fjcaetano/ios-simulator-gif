@@ -1,4 +1,4 @@
-📱 ios-simulator-gif
+📱 ios-simulator-gif ![homebrew][1]
 ---
 
 Record a gif from your iOS simulator in a jiffy
@@ -45,3 +45,4 @@ sent to `ffmpeg` as arguments:
 $ ios-simulator-gif -r 30 example.gif -- -b 128k
 ```
 
+[1]: https://img.shields.io/github/tag/fjcaetano/ios-simulator-gif?color=orange&label=homebrew
