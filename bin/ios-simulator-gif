@@ -88,17 +88,19 @@ parse_args() {
 # The command line help #
 #########################
 display_help() {
-    echo "Usage: $0 [options] {out_file} {-- [ffmpeg options]}" >&2
-    echo
-    echo "  out_file                    The output file name (default: simulator.gif)"
-    echo "  ffmpeg options              Pass everything after '--' to ffmpeg as arguments"
-    echo
-    echo "  -r, --rate                  Framerate of the output (default: 6)"
-    echo "  -f, --format                Output format (default: gif)"
-    echo "  -vf, --video-filter         Video filter for ffmpeg (default: scale=320:-1)"
-    echo "  -h, --help                  Outputs this help message"
-    echo
-    exit 0
+  CMD=$(basename -- $0)
+  
+  echo "Usage: $CMD [options] {out_file} {-- [ffmpeg options]}" >&2
+  echo
+  echo "  out_file                    The output file name (default: simulator.gif)"
+  echo "  ffmpeg options              Pass everything after '--' to ffmpeg as arguments"
+  echo
+  echo "  -r, --rate                  Framerate of the output (default: 6)"
+  echo "  -f, --format                Output format (default: gif)"
+  echo "  -vf, --video-filter         Video filter for ffmpeg (default: scale=320:-1)"
+  echo "  -h, --help                  Outputs this help message"
+  echo
+  exit 0
 }
 
 main "$@"
