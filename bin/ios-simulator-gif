@@ -8,8 +8,21 @@
 ##############
 main() {
   parse_args "$@"
+  check_booted
   record
   convert_gif
+}
+
+#####################
+### Check Booted  ###
+#####################
+check_booted() {
+  xcrun simctl list | grep Booted &> /dev/null
+
+  if [[ $? -ne 0 ]]; then
+    echo "No devices are booted"
+    exit 404
+  fi
 }
 
 ##################
@@ -89,7 +102,7 @@ parse_args() {
 #########################
 display_help() {
   CMD=$(basename -- $0)
-  
+
   echo "Usage: $CMD [options] {out_file} {-- [ffmpeg options]}" >&2
   echo
   echo "  out_file                    The output file name (default: simulator.gif)"
