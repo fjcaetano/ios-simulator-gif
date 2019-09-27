@@ -5,6 +5,7 @@ class IosSimulatorGif < Formula
   sha256 "3a34bc612b7a7832bb46a30774b063845635fd56f1bd3744be65cbc0f4ceaa03"
 
   depends_on "ffmpeg"
+  depends_on "gnu-sed"
 
   def install
     bin.install "bin/ios-simulator-gif"

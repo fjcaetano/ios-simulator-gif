@@ -1,7 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Records iOS simulator screen and saves as a gif to simulator.gif
 # A new file name may be passed as argument
+
+RED="\033[1;31m"
+GREEN="\033[1;32m"
+CLEAR="\033[0m"
 
 ##############
 ###  MAIN  ###
@@ -17,11 +21,43 @@ main() {
 ### Check Booted  ###
 #####################
 check_booted() {
-  xcrun simctl list | grep Booted &> /dev/null
+  VERSION=""
+  COUNT=0
+  MENU=()
+  UUIDS=()
+  UUID="booted"
 
-  if [[ $? -ne 0 ]]; then
+  # Parse simulators
+  while read -r SIM; do
+    NAME=$(echo "$SIM" | gsed '/Booted/!{q1}; {s/^\(.*\) (.*(Booted)/\1/}')
+    
+    if [ $? -eq 1 ]; then
+      VERSION=$(echo "$SIM" | gsed '/-- /!{q1}; {s/-- \(.*\) --/\1/}')
+      continue
+    fi
+
+    UUID=$(echo "$SIM" | gsed '/Booted/!{q1}; {s/^.* (\(.*\)) .*$/\1/}')
+    UUIDS+=($UUID)
+
+    MENU+=("[$COUNT]: $NAME ($VERSION)")
+    ((COUNT++))
+  done < <(xcrun simctl list | grep 'Booted\|-- ')
+
+  if [[ $COUNT -eq 0 ]]; then
     echo "No devices are booted"
     exit 404
+  elif [[ $COUNT -gt 1 ]]; then
+    echo -e "There are more than one simulator booted:\n"
+    printf '%s\n' "${MENU[@]}"
+
+    res=-1
+    while (( res < 0 || res >= $COUNT )); do
+      printf "\\nPlease, select an option: [0-%d]: " $(expr $COUNT - 1)
+      read -n1 res
+    done
+
+    UUID=${UUIDS[$res]}
+    echo -e "\n"
   fi
 }
 
@@ -29,9 +65,9 @@ check_booted() {
 ###   Record   ###
 ##################
 record() {
-  echo 'Recording...\n\n[Press any key to stop recording]'
+  echo -e "${RED}Recording...${CLEAR}\n\n[Press any key to stop recording]"
 
-  xcrun simctl io booted recordVideo /tmp/simulator.mov &
+  xcrun simctl io ${UUID} recordVideo /tmp/simulator.mov &
   PID=$!
 
   read -n1
@@ -42,11 +78,11 @@ record() {
 ###   Convert GIF   ###
 #######################
 convert_gif() {
-  echo "Converting and saving to ${FILE_NAME}\n"
+  echo -e "Converting and saving to ${FILE_NAME}\n"
   ffmpeg -i /tmp/simulator.mov -vf $VIDEOFILTER -r $RATE -f $FORMAT -y $FILE_NAME $EXTRA &> /tmp/ffmpeg.log
 
   if [[ $? -eq 0 ]]; then
-    echo "Gif saved to ${FILE_NAME}"
+    echo -e "${GREEN}Gif saved to ${FILE_NAME}${CLEAR}"
   else
     cat /tmp/ffmpeg.log
   fi
