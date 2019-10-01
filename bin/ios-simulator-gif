@@ -3,6 +3,7 @@
 # Records iOS simulator screen and saves as a gif to simulator.gif
 # A new file name may be passed as argument
 
+PKG_VERSION="1.1.0"
 RED="\033[1;31m"
 GREEN="\033[1;32m"
 CLEAR="\033[0m"
@@ -115,6 +116,10 @@ parse_args() {
       display_help
       shift
       ;;
+      -v|--version)
+      echo "${PKG_VERSION}"
+      exit 0
+      ;;
       --)
       EXTRA="${@:2}"
       shift
@@ -148,6 +153,7 @@ display_help() {
   echo "  -f, --format                Output format (default: gif)"
   echo "  -vf, --video-filter         Video filter for ffmpeg (default: scale=320:-1)"
   echo "  -h, --help                  Outputs this help message"
+  echo "  -v, --version               Outputs the version number"
   echo
   exit 0
 }
