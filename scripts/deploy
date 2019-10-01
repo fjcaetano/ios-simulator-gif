@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Extract data
+URL_PREFIX="$(gsed -n "s;.*url \"\(.*archive\)/.*\";\1;p" HomebrewFormula/ios-simulator-gif.rb)"
+URL="${URL_PREFIX}/${GITHUB_REF}.tar.gz"
+
+curl -sf "https://codeload.github.com/fjcaetano/ios-simulator-gif/tar.gz/${GITHUB_REF}" > package.tar.gz
+if [[ $? -ne 0 ]]; then
+  rm package.tar.gz
+  echo 'curl failed';
+  exit 1;
+fi;
+
+DIGEST="$(openssl sha256 package.tar.gz | gsed 's/^.* //')"
+rm package.tar.gz
+
+# Update files
+gsed -i "s/PKG_VERSION=.*/PKG_VERSION=\"$GITHUB_REF\"/" bin/ios-simulator-gif
+gsed -i "s;url.*;url \"${URL}\";" HomebrewFormula/ios-simulator-gif.rb
+gsed -i "s/sha256.*/sha256 \"${DIGEST}\"/" HomebrewFormula/ios-simulator-gif.rb
+
+# Git config
+REPO_PATH="https://${ACCESS_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
+git config user.email "actions@github.com"
+git config user.name "Github Actions"
+
+git add bin/ios-simulator-gif HomebrewFormula/ios-simulator-gif.rb
+git commit -m "chore(Deploy): version ${GITHUB_REF} ${GITHUB_SHA}" --quiet --no-verify
+
+# Push
+git push "${REPO_PATH}"
