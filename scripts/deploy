@@ -1,0 +1,43 @@
+#!/bin/bash
+
+GIT_TAG="$(echo "${GITHUB_REF}" | sed 's;refs/tags/;;')"
+echo "Bumping version to ${GIT_TAG}"
+
+# Extract data
+URL="https://codeload.github.com/${GITHUB_REPOSITORY}/tar.gz/${GIT_TAG}"
+
+echo "Downloading package..."
+
+curl -sf "${URL}" > package.tar.gz
+if [[ $? -ne 0 ]]; then
+  rm package.tar.gz
+  echo 'curl failed';
+  exit 1;
+fi
+
+DIGEST="$(openssl sha256 package.tar.gz | sed 's/^.* //')"
+rm package.tar.gz
+
+echo -e "SHA256: ${DIGEST}\n"
+echo -e "Updating files...\n"
+
+# Update files
+sed -i "s/version \".*/version \"${GIT_TAG}\"/" HomebrewFormula/ios-simulator-gif.rb
+sed -i "s/sha256.*/sha256 \"${DIGEST}\"/" HomebrewFormula/ios-simulator-gif.rb
+
+echo "Changed files:"
+echo -e "$(git diff --name-only)\n"
+
+# Git config
+git config user.email "actions@github.com"
+git config user.name "Github Actions"
+
+echo "Committing changes..."
+
+git add bin/ios-simulator-gif HomebrewFormula/ios-simulator-gif.rb
+git commit -m "chore(Deploy): version ${GIT_TAG}" --quiet --no-verify
+
+# Push
+echo "Pushing commit..."
+REPO_PATH="https://${ACCESS_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+git push "${REPO_PATH}" HEAD:master

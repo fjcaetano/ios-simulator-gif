@@ -3,7 +3,7 @@
 # Records iOS simulator screen and saves as a gif to simulator.gif
 # A new file name may be passed as argument
 
-PKG_VERSION="1.1.0"
+PKG_VERSION="${ENV_VERSION}"
 RED="\033[1;31m"
 GREEN="\033[1;32m"
 CLEAR="\033[0m"

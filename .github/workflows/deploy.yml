@@ -1,0 +1,19 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: update package version
+      run: |
+        scripts/deploy
+      env:
+        CI: true
+        ACCESS_TOKEN: ${{secrets.PUBLISH_TOKEN}}
