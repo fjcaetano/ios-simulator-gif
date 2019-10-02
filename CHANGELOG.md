@@ -1,3 +1,7 @@
+# 1.2.0
+
+- Feat: Print current version
+
 # 1.1.0
 
 - Feat: Support multiple booted devices (#2)
