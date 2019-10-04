@@ -18,7 +18,7 @@ $ brew tap fjcaetano/ios-simulator-gif https://github.com/fjcaetano/ios-simulato
 2. Install ios-simulator-gif (and dependencies):
 
 ```sh
-$ brew install fjcaetano/ios-simulator-gif/ios-simulator-gif
+$ brew install ios-simulator-gif
 ```
 
 ## Usage
@@ -27,12 +27,13 @@ $ brew install fjcaetano/ios-simulator-gif/ios-simulator-gif
 $ ios-simulator-gif [options] {out_file} {-- [ffmpeg options]}
 ```
 
-| Options             | Description               | Default value   |
-| ------------------- | ------------------------- | :-------------: |
-| -r, --rate          | Framerate of the output   | `6`             |
-| -f, --format        | Output format             | `gif`           |
-| -vf, --video-filter | Video filter for `ffmpeg` | `scale=320:-1`  |
-| -h, --help          | Outputs helper message    | N/A             |
+| Options             | Description               | Default value  |
+| ------------------- | ------------------------- | :------------: |
+| -r, --rate          | Framerate of the output   |      `6`       |
+| -f, --format        | Output format             |     `gif`      |
+| -vf, --video-filter | Video filter for `ffmpeg` | `scale=320:-1` |
+| -h, --help          | Prints helper message     |      N/A       |
+| -v, --version       | Prints current version    |      N/A       |
 
 If no file name is given, it will save the gif to `./simulator.gif`
 
