@@ -80,7 +80,8 @@ record() {
 #######################
 convert_gif() {
   echo -e "Converting and saving to ${FILE_NAME}\n"
-  ffmpeg -i /tmp/simulator.mov -vf $VIDEOFILTER -r $RATE -f $FORMAT -y $FILE_NAME $EXTRA &> /tmp/ffmpeg.log
+  WATERMARK_CMD="drawtext=text='ios-simulator-gif':x=10:y=H-th-10:fontsize=40:fontcolor=white:shadowcolor=black:shadowx=5:shadowy=5"
+  ffmpeg -i /tmp/simulator.mov -vf "${HIDE_WATERMARK-$WATERMARK_CMD,}${VIDEOFILTER}" -r $RATE -f $FORMAT -y $FILE_NAME $EXTRA &> /tmp/ffmpeg.log
 
   if [[ $? -eq 0 ]]; then
     echo -e "${GREEN}Gif saved to ${FILE_NAME}${CLEAR}"
@@ -120,6 +121,10 @@ parse_args() {
       echo "${PKG_VERSION}"
       exit 0
       ;;
+      --no-watermark)
+      HIDE_WATERMARK=''
+      shift 1
+      ;;
       --)
       EXTRA="${@:2}"
       shift
@@ -152,6 +157,7 @@ display_help() {
   echo "  -r, --rate                  Framerate of the output (default: 6)"
   echo "  -f, --format                Output format (default: gif)"
   echo "  -vf, --video-filter         Video filter for ffmpeg (default: scale=320:-1)"
+  echo "  --no-watermark              Remove watermark from gif"
   echo "  -h, --help                  Outputs this help message"
   echo "  -v, --version               Outputs the version number"
   echo

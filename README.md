@@ -32,6 +32,7 @@ $ ios-simulator-gif [options] {out_file} {-- [ffmpeg options]}
 | -r, --rate          | Framerate of the output   |      `6`       |
 | -f, --format        | Output format             |     `gif`      |
 | -vf, --video-filter | Video filter for `ffmpeg` | `scale=320:-1` |
+| --no-watermark      | Remove watermark from gif |      N/A       |
 | -h, --help          | Prints helper message     |      N/A       |
 | -v, --version       | Prints current version    |      N/A       |
 
