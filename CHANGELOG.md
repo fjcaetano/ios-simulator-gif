@@ -1,3 +1,7 @@
+# 1.3.0
+
+- Feat: add watermark
+
 # 1.2.0
 
 - Feat: Print current version
