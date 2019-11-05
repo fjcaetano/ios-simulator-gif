@@ -1,9 +1,9 @@
 class IosSimulatorGif < Formula
-  version "1.2.0"
+  version "1.3.0"
   desc "Record a gif from your iOS simulator in a jiffy"
   homepage "https://github.com/fjcaetano/ios-simulator-gif"
   url "https://codeload.github.com/fjcaetano/ios-simulator-gif/tar.gz/#{version}"
-  sha256 "197bf7804a93d9321f678e7c951c82387b37717b1dc9bb79a9e1d0c7e87546a8"
+  sha256 "81da64ed1d919108dbabb51bd851816c6244c87967e3d66af8a0be64e9737487"
 
   depends_on "ffmpeg"
   depends_on "gnu-sed"
