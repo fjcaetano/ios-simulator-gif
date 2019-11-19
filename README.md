@@ -1,4 +1,4 @@
-📱 ios-simulator-gif ![homebrew][1]
+📱 ios-simulator-gif ![homebrew][1] [![PRs welcome][2]](https://github.com/fjcaetano/ios-simulator-gif/pulls)
 ---
 
 Record a gif from your iOS simulator in a jiffy
@@ -48,3 +48,4 @@ $ ios-simulator-gif -r 30 example.gif -- -b 128k
 ```
 
 [1]: https://img.shields.io/github/tag/fjcaetano/ios-simulator-gif?color=orange&label=homebrew
+[2]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
