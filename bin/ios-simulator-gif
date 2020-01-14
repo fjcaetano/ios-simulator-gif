@@ -68,11 +68,12 @@ check_booted() {
 record() {
   echo -e "${RED}Recording...${CLEAR}\n\n[Press any key to stop recording]"
 
-  xcrun simctl io ${UUID} recordVideo /tmp/simulator.mov &
+  xcrun simctl io ${UUID} recordVideo -f /tmp/simulator.mov &
   PID=$!
 
   read -n1
   kill -2 $PID
+  sleep 1
 }
 
 #######################
