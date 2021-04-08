@@ -7,14 +7,15 @@ PKG_VERSION="${ENV_VERSION}"
 RED="\033[1;31m"
 GREEN="\033[1;32m"
 CLEAR="\033[0m"
+VIDEO=/tmp/simulator-gif.mov
 
 ##############
 ###  MAIN  ###
 ##############
 main() {
   parse_args "$@"
-  check_booted
-  record
+  # check_booted
+  # record
   convert_gif
 }
 
@@ -68,7 +69,7 @@ check_booted() {
 record() {
   echo -e "${RED}Recording...${CLEAR}\n\n[Press any key to stop recording]"
 
-  xcrun simctl io ${UUID} recordVideo -f /tmp/simulator.mov &
+  xcrun simctl io ${UUID} recordVideo -f ${VIDEO} &
   PID=$!
 
   read -n1
@@ -82,7 +83,13 @@ record() {
 convert_gif() {
   echo -e "Converting and saving to ${FILE_NAME}\n"
   WATERMARK_CMD="drawtext=text='ios-simulator-gif':x=10:y=H-th-10:fontsize=40:fontcolor=white:shadowcolor=black:shadowx=5:shadowy=5"
-  ffmpeg -i /tmp/simulator.mov -vf "${HIDE_WATERMARK-$WATERMARK_CMD,}${VIDEOFILTER}" -r $RATE -f $FORMAT -y $FILE_NAME $EXTRA &> /tmp/ffmpeg.log
+  
+  PALLETE="/tmp/palette.png"
+  FILTERS="${HIDE_WATERMARK-$WATERMARK_CMD,}${VIDEOFILTER},fps=${RATE}"
+
+  ffmpeg -v warning -i ${VIDEO} -vf "$FILTERS,palettegen=stats_mode=diff" -y ${PALLETE}
+  ffmpeg -i ${VIDEO} -i ${PALLETE} -lavfi "$FILTERS,paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" -r $RATE -f $FORMAT -y $FILE_NAME $EXTRA &> /tmp/ffmpeg.log
+
 
   if [[ $? -eq 0 ]]; then
     echo -e "${GREEN}Gif saved to ${FILE_NAME}${CLEAR}"
@@ -139,8 +146,8 @@ parse_args() {
   set -- "${FILE_NAME[@]}"
 
   FILE_NAME=${FILE_NAME-simulator.gif}
-  RATE=${RATE-6}
-  VIDEOFILTER=${VIDEOFILTER-'scale=320:-1'}
+  RATE=${RATE-15}
+  VIDEOFILTER=${VIDEOFILTER-"scale=320:-1:flags=lanczos"}
   FORMAT=${FORMAT-gif}
 }
 
@@ -155,9 +162,9 @@ display_help() {
   echo "  out_file                    The output file name (default: simulator.gif)"
   echo "  ffmpeg options              Pass everything after '--' to ffmpeg as arguments"
   echo
-  echo "  -r, --rate                  Framerate of the output (default: 6)"
+  echo "  -r, --rate                  Framerate of the output (default: 15)"
   echo "  -f, --format                Output format (default: gif)"
-  echo "  -vf, --video-filter         Video filter for ffmpeg (default: scale=320:-1)"
+  echo "  -vf, --video-filter         Video filter for ffmpeg (default: scale=320:-1:flags=lanczos)"
   echo "  --no-watermark              Remove watermark from gif"
   echo "  -h, --help                  Outputs this help message"
   echo "  -v, --version               Outputs the version number"
