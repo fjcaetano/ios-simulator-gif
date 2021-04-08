@@ -14,8 +14,8 @@ VIDEO=/tmp/simulator-gif.mov
 ##############
 main() {
   parse_args "$@"
-  # check_booted
-  # record
+  check_booted
+  record
   convert_gif
 }
 
@@ -87,6 +87,10 @@ convert_gif() {
   PALLETE="/tmp/palette.png"
   FILTERS="${HIDE_WATERMARK-$WATERMARK_CMD,}${VIDEOFILTER},fps=${RATE}"
 
+  if [[ ! -z "${TRANSPOSE}" ]]; then
+    FILTERS="${FILTERS},transpose=${TRANSPOSE}"
+  fi
+
   ffmpeg -v warning -i ${VIDEO} -vf "$FILTERS,palettegen=stats_mode=diff" -y ${PALLETE}
   ffmpeg -i ${VIDEO} -i ${PALLETE} -lavfi "$FILTERS,paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" -r $RATE -f $FORMAT -y $FILE_NAME $EXTRA &> /tmp/ffmpeg.log
 
@@ -129,6 +133,10 @@ parse_args() {
       echo "${PKG_VERSION}"
       exit 0
       ;;
+      -t|--transpose)
+      TRANSPOSE="$2"
+      shift 2
+      ;;
       --no-watermark)
       HIDE_WATERMARK=''
       shift 1
@@ -165,6 +173,7 @@ display_help() {
   echo "  -r, --rate                  Framerate of the output (default: 15)"
   echo "  -f, --format                Output format (default: gif)"
   echo "  -vf, --video-filter         Video filter for ffmpeg (default: scale=320:-1:flags=lanczos)"
+  echo "  -t, --transpose             Transpose the video for landscape orientation (usually 1 for 90deg and 2 for 270deg)"
   echo "  --no-watermark              Remove watermark from gif"
   echo "  -h, --help                  Outputs this help message"
   echo "  -v, --version               Outputs the version number"

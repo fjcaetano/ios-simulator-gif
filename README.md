@@ -32,11 +32,16 @@ $ ios-simulator-gif [options] {out_file} {-- [ffmpeg options]}
 | -r, --rate          | Framerate of the output   |      `6`       |
 | -f, --format        | Output format             |     `gif`      |
 | -vf, --video-filter | Video filter for `ffmpeg` | `scale=320:-1` |
+|  -t, --transpose    | Transpose the video for landscape orientation | N/A |
 | --no-watermark      | Remove watermark from gif |      N/A       |
 | -h, --help          | Prints helper message     |      N/A       |
 | -v, --version       | Prints current version    |      N/A       |
 
 If no file name is given, it will save the gif to `./simulator.gif`
+
+When recording a video in landscape mode you'll need to provide the appropriate transposing argument. It's usually the following:
+1. `--transpose 1` when the simulator is rotated 90º (camera to the right)
+2. `--transpose 2` when the simulator is rotated 270º (camera to the left)
 
 ### Sending extra arguments to `ffmpeg`
 
