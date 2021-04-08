@@ -29,7 +29,7 @@ $ ios-simulator-gif [options] {out_file} {-- [ffmpeg options]}
 
 | Options             | Description               | Default value  |
 | ------------------- | ------------------------- | :------------: |
-| -r, --rate          | Framerate of the output   |      `6`       |
+| -r, --rate          | Framerate of the output   |      `15`      |
 | -f, --format        | Output format             |     `gif`      |
 | -vf, --video-filter | Video filter for `ffmpeg` | `scale=320:-1` |
 |  -t, --transpose    | Transpose the video for landscape orientation | N/A |

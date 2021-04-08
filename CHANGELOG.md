@@ -1,3 +1,13 @@
+# 1.4.0
+
+- Feat: Tranpose `-t,--transpose` video for recording on landscape mode
+- Feat: Increase default fps to 15
+- Chore: Improve gif quality overall
+
+# 1.3.1
+
+- Fix: force recorded video to be overwritten on every execution
+
 # 1.3.0
 
 - Feat: add watermark
